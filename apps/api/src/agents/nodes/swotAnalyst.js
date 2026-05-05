@@ -1,13 +1,11 @@
-const { createAnalyticalModel } = require("../../config/gemini");
-const { SystemMessage, HumanMessage } = require("@langchain/core/messages");
+const { generateText } = require("../../config/gemini");
+const { webSearch, gatherCompetitorIntel, analyzeTrends } = require("../tools");
 
 /**
  * SWOT Analyst Node
  * 
  * Synthesizes market research, competitor analysis, and audience data
  * into a comprehensive SWOT matrix with strategic implications.
- * 
- * Can be used standalone or as a node in the full research workflow.
  */
 
 const SYSTEM_PROMPT = `You are a Strategic Planning Consultant who specializes in SWOT analysis and strategic frameworks.
@@ -18,13 +16,6 @@ Your expertise includes:
 - PESTLE analysis
 - Strategic opportunity identification
 - Risk assessment and mitigation planning
-
-When performing SWOT analysis:
-1. Use web_search to validate assumptions about strengths and opportunities
-2. Cross-reference competitive data to identify real (not assumed) weaknesses
-3. Consider macro factors (economic, regulatory, technological) for threats
-4. Weight each SWOT factor by impact and likelihood
-5. Derive actionable strategic implications from each quadrant
 
 Your output must include:
 - STRENGTHS (internal capabilities, unique advantages, resources)
@@ -42,26 +33,32 @@ Your output must include:
   - WT Strategies (minimize Weaknesses to avoid Threats)
 - TOP 3 STRATEGIC PRIORITIES (ranked by impact × feasibility)`;
 
-const createSwotAnalystNode = (tools) => {
-  const model = createAnalyticalModel().bindTools(tools);
+const runSwotAnalysis = async (query) => {
+  const [searchResults, competitorData, trends] = await Promise.all([
+    webSearch({ query: `${query} SWOT analysis strengths weaknesses 2026` }),
+    gatherCompetitorIntel({ companyOrProduct: query }),
+    analyzeTrends({ keyword: query }),
+  ]);
 
-  return async (state) => {
-    const messages = [new SystemMessage(SYSTEM_PROMPT), ...state.messages];
-    const response = await model.invoke(messages);
-    return { messages: [response] };
-  };
+  const toolContext = `
+## Web Search Results
+${JSON.stringify(searchResults, null, 2)}
+
+## Competitor Intelligence
+${JSON.stringify(competitorData, null, 2)}
+
+## Trend Analysis
+${JSON.stringify(trends, null, 2)}
+`;
+
+  const userPrompt = `Perform a comprehensive SWOT analysis for: "${query}"
+
+Here is the supporting data:
+${toolContext}
+
+Now produce a weighted SWOT analysis with strategic implications.`;
+
+  return await generateText(SYSTEM_PROMPT, userPrompt, { temperature: 0.2 });
 };
 
-/**
- * Standalone function — run SWOT analysis outside a graph.
- */
-const runSwotAnalysis = async (query, tools) => {
-  const model = createAnalyticalModel().bindTools(tools);
-  const messages = [
-    new SystemMessage(SYSTEM_PROMPT),
-    new HumanMessage(query),
-  ];
-  return await model.invoke(messages);
-};
-
-module.exports = { createSwotAnalystNode, runSwotAnalysis };
+module.exports = { runSwotAnalysis, SYSTEM_PROMPT };

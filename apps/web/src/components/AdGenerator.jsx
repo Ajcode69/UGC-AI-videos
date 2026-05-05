@@ -112,8 +112,31 @@ const AdGenerator = ({ user }) => {
           <h3 className="text-xl font-bold mb-4 flex items-center gap-2 text-white">
             <FiZap className="text-primary" /> Generation Result
           </h3>
-          <div className="bg-dark-bg border border-dark-border rounded-xl p-6">
-            <pre className="text-gray-300 whitespace-pre-wrap font-sans leading-relaxed">{result}</pre>
+          <div className="flex flex-col gap-6">
+            {/* Video Player */}
+            {result.videoUri && (
+              <div className="w-full rounded-xl overflow-hidden bg-black border border-dark-border">
+                <video 
+                  src={result.videoUri} 
+                  controls 
+                  autoPlay 
+                  loop 
+                  className="w-full h-auto max-h-[500px] object-contain"
+                >
+                  Your browser does not support the video tag.
+                </video>
+              </div>
+            )}
+            
+            {/* Display Prompt Used */}
+            {result.hfPrompt && (
+              <div className="bg-dark-bg border border-dark-border rounded-xl p-6">
+                <h4 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">AI Video Prompt Used</h4>
+                <pre className="text-gray-300 whitespace-pre-wrap font-sans leading-relaxed text-sm">
+                  {result.hfPrompt}
+                </pre>
+              </div>
+            )}
           </div>
         </div>
       )}

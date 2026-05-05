@@ -1,33 +1,17 @@
 /**
  * Tools Index
  * 
- * Central export of all tools available to agents.
- * Import from here to keep agent code clean.
+ * Central export of all tool functions available to agents.
  */
 
-const { webSearchTool } = require("./webSearch");
-const { trendAnalyzerTool } = require("./trendAnalyzer");
-const { competitorIntelTool } = require("./competitorIntel");
-const { audienceInsightsTool } = require("./audienceInsights");
-
-// All research tools
-const researchTools = [webSearchTool, trendAnalyzerTool, competitorIntelTool, audienceInsightsTool];
-
-// Internet-only tools
-const internetTools = [webSearchTool];
-
-// Analysis tools (no internet dependency)
-const analysisTools = [trendAnalyzerTool, competitorIntelTool, audienceInsightsTool];
+const { webSearch } = require("./webSearch");
+const { analyzeTrends } = require("./trendAnalyzer");
+const { gatherCompetitorIntel } = require("./competitorIntel");
+const { gatherAudienceInsights } = require("./audienceInsights");
 
 module.exports = {
-  // Individual tools
-  webSearchTool,
-  trendAnalyzerTool,
-  competitorIntelTool,
-  audienceInsightsTool,
-
-  // Tool bundles
-  researchTools,
-  internetTools,
-  analysisTools,
+  webSearch,
+  analyzeTrends,
+  gatherCompetitorIntel,
+  gatherAudienceInsights,
 };

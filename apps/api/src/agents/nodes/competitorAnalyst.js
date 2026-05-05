@@ -1,14 +1,10 @@
-const { createAnalyticalModel } = require("../../config/gemini");
-const { SystemMessage, HumanMessage } = require("@langchain/core/messages");
+const { generateText } = require("../../config/gemini");
+const { webSearch, gatherCompetitorIntel } = require("../tools");
 
 /**
  * Competitor Analyst Node
  * 
- * Specializes in competitive landscape analysis. Researches direct and
- * indirect competitors, analyzes positioning, pricing, strengths/weaknesses,
- * and identifies competitive moats and vulnerabilities.
- * 
- * Can be used standalone or as a node in the full research workflow.
+ * Specializes in competitive landscape analysis.
  */
 
 const SYSTEM_PROMPT = `You are a Competitive Intelligence Analyst specializing in deep competitive analysis.
@@ -21,13 +17,6 @@ Your expertise includes:
 - SWOT per competitor
 - Competitive moat and vulnerability assessment
 
-When analyzing competitors:
-1. Use the competitor_intel tool to gather data on each competitor
-2. Use web_search to supplement with latest news, funding rounds, product launches
-3. Look for patterns: who's winning market share and why
-4. Identify under-served niches that competitors are ignoring
-5. Assess barriers to entry and switching costs
-
 Your output should include:
 - Competitive Landscape Overview (market map)
 - Top 3-5 Competitors Deep Dive (for each: positioning, pricing, strengths, weaknesses)
@@ -35,26 +24,28 @@ Your output should include:
 - Threat Assessment (who is the biggest threat and why)
 - Strategic Gaps & Opportunities (where competitors are weak)`;
 
-const createCompetitorAnalystNode = (tools) => {
-  const model = createAnalyticalModel().bindTools(tools);
+const runCompetitorAnalysis = async (query) => {
+  const [searchResults, competitorData] = await Promise.all([
+    webSearch({ query: `${query} competitors landscape 2026` }),
+    gatherCompetitorIntel({ companyOrProduct: query }),
+  ]);
 
-  return async (state) => {
-    const messages = [new SystemMessage(SYSTEM_PROMPT), ...state.messages];
-    const response = await model.invoke(messages);
-    return { messages: [response] };
-  };
+  const toolContext = `
+## Web Search Results
+${JSON.stringify(searchResults, null, 2)}
+
+## Competitor Intelligence
+${JSON.stringify(competitorData, null, 2)}
+`;
+
+  const userPrompt = `Analyze the competitive landscape for: "${query}"
+
+Here is the data I gathered:
+${toolContext}
+
+Now produce a comprehensive competitive analysis.`;
+
+  return await generateText(SYSTEM_PROMPT, userPrompt, { temperature: 0.2 });
 };
 
-/**
- * Standalone function — run competitor analysis outside a graph.
- */
-const runCompetitorAnalysis = async (query, tools) => {
-  const model = createAnalyticalModel().bindTools(tools);
-  const messages = [
-    new SystemMessage(SYSTEM_PROMPT),
-    new HumanMessage(query),
-  ];
-  return await model.invoke(messages);
-};
-
-module.exports = { createCompetitorAnalystNode, runCompetitorAnalysis };
+module.exports = { runCompetitorAnalysis, SYSTEM_PROMPT };

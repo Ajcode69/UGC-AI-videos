@@ -1,16 +1,10 @@
-const { createCreativeModel } = require("../../config/gemini");
-const { SystemMessage, HumanMessage } = require("@langchain/core/messages");
+const { generateText } = require("../../config/gemini");
+const { webSearch, analyzeTrends, gatherAudienceInsights } = require("../tools");
 
 /**
  * Campaign Strategist Node
  * 
- * Takes all research outputs (market data, competitor analysis, personas,
- * SWOT) and produces an actionable UGC video marketing campaign strategy.
- * 
- * This is the final synthesis agent in the workflow — it ties everything together
- * into campaign recommendations specifically tailored for UGC video content.
- * 
- * Can be used standalone or as a node in the full research workflow.
+ * Takes research context and produces an actionable UGC video marketing campaign strategy.
  */
 
 const SYSTEM_PROMPT = `You are a Creative Campaign Strategist specializing in UGC (User-Generated Content) video marketing.
@@ -22,13 +16,6 @@ Your expertise includes:
 - Content calendar planning
 - Performance KPI frameworks
 - A/B testing strategy for creative
-
-When developing campaign strategy:
-1. Use web_search to find current best practices and viral UGC examples
-2. Reference the personas (from earlier research) to tailor messaging
-3. Think platform-native — each platform has different content norms
-4. Focus on authenticity — UGC works because it feels real, not polished
-5. Include specific video concepts, not just abstract strategy
 
 Your output should include:
 
@@ -62,26 +49,32 @@ Your output should include:
 - Week-by-week posting plan for first month
 - Key dates and moments to capitalize on`;
 
-const createCampaignStrategistNode = (tools) => {
-  const model = createCreativeModel().bindTools(tools);
+const runCampaignStrategy = async (query) => {
+  const [searchResults, trends, audienceData] = await Promise.all([
+    webSearch({ query: `${query} UGC video marketing campaign best practices 2026` }),
+    analyzeTrends({ keyword: query }),
+    gatherAudienceInsights({ productCategory: query }),
+  ]);
 
-  return async (state) => {
-    const messages = [new SystemMessage(SYSTEM_PROMPT), ...state.messages];
-    const response = await model.invoke(messages);
-    return { messages: [response] };
-  };
+  const toolContext = `
+## Web Search Results
+${JSON.stringify(searchResults, null, 2)}
+
+## Trend Analysis
+${JSON.stringify(trends, null, 2)}
+
+## Audience Insights
+${JSON.stringify(audienceData, null, 2)}
+`;
+
+  const userPrompt = `Create a UGC video marketing campaign strategy for: "${query}"
+
+Here is the supporting data:
+${toolContext}
+
+Now produce a comprehensive, actionable campaign strategy.`;
+
+  return await generateText(SYSTEM_PROMPT, userPrompt, { temperature: 0.9 });
 };
 
-/**
- * Standalone function — run campaign strategy outside a graph.
- */
-const runCampaignStrategy = async (query, tools) => {
-  const model = createCreativeModel().bindTools(tools);
-  const messages = [
-    new SystemMessage(SYSTEM_PROMPT),
-    new HumanMessage(query),
-  ];
-  return await model.invoke(messages);
-};
-
-module.exports = { createCampaignStrategistNode, runCampaignStrategy };
+module.exports = { runCampaignStrategy, SYSTEM_PROMPT };

@@ -1,29 +1,21 @@
 /**
  * Agent Nodes Index
  * 
- * Central export of all agent node factories and standalone runners.
+ * Central export of all agent runner functions.
  */
 
-const { createMarketResearcherNode, runMarketResearcher } = require("./marketResearcher");
-const { createCompetitorAnalystNode, runCompetitorAnalysis } = require("./competitorAnalyst");
-const { createPersonaGeneratorNode, runPersonaGeneration } = require("./personaGenerator");
-const { createSwotAnalystNode, runSwotAnalysis } = require("./swotAnalyst");
-const { createCampaignStrategistNode, runCampaignStrategy } = require("./campaignStrategist");
-const { createSynthesizerNode } = require("./researchSynthesizer");
+const { runMarketResearcher } = require("./marketResearcher");
+const { runCompetitorAnalysis } = require("./competitorAnalyst");
+const { runPersonaGeneration } = require("./personaGenerator");
+const { runSwotAnalysis } = require("./swotAnalyst");
+const { runCampaignStrategy } = require("./campaignStrategist");
+const { runSynthesizer } = require("./researchSynthesizer");
 
 module.exports = {
-  // Node factories (for graph composition)
-  createMarketResearcherNode,
-  createCompetitorAnalystNode,
-  createPersonaGeneratorNode,
-  createSwotAnalystNode,
-  createCampaignStrategistNode,
-  createSynthesizerNode,
-
-  // Standalone runners (for direct invocation outside graphs)
   runMarketResearcher,
   runCompetitorAnalysis,
   runPersonaGeneration,
   runSwotAnalysis,
   runCampaignStrategy,
+  runSynthesizer,
 };

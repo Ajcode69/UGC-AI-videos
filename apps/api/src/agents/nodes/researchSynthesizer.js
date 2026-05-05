@@ -1,15 +1,10 @@
-const { createAnalyticalModel } = require("../../config/gemini");
-const { SystemMessage } = require("@langchain/core/messages");
+const { generateText } = require("../../config/gemini");
 
 /**
  * Research Synthesizer Node
  * 
  * A meta-agent that reads all outputs from previous research nodes and
- * produces a unified executive summary. This is the orchestrator's
- * final pass — it identifies conflicts between agents, fills gaps,
- * and produces a cohesive narrative.
- * 
- * Only used in the full workflow (not standalone).
+ * produces a unified executive summary. Only used in the full workflow.
  */
 
 const SYSTEM_PROMPT = `You are a Chief Strategy Officer synthesizing research from your entire team.
@@ -22,7 +17,7 @@ You have received outputs from:
 - Campaign Strategist (UGC video campaign recommendations)
 
 Your job is to:
-1. Read ALL previous outputs in the conversation
+1. Read ALL previous outputs provided
 2. Identify contradictions or conflicts between analysts (flag them)
 3. Fill in any gaps that individual analysts missed
 4. Produce a unified Executive Summary that a CEO or CMO can act on
@@ -49,14 +44,33 @@ Each with: Finding → Evidence → Implication → Recommended Action
 
 DO NOT repeat the full analysis from previous agents. Reference their sections and add your higher-order synthesis. Be concise and action-oriented.`;
 
-const createSynthesizerNode = () => {
-  const model = createAnalyticalModel();
+/**
+ * Synthesize all research sections into an executive summary.
+ * 
+ * @param {object} sections - All research outputs keyed by phase name
+ * @returns {Promise<string>} Executive synthesis
+ */
+const runSynthesizer = async (sections) => {
+  const userPrompt = `Here are all the research outputs from my team:
 
-  return async (state) => {
-    const messages = [new SystemMessage(SYSTEM_PROMPT), ...state.messages];
-    const response = await model.invoke(messages);
-    return { messages: [response] };
-  };
+## Market Research
+${sections.market_research || "Not available"}
+
+## Competitor Analysis
+${sections.competitor_analysis || "Not available"}
+
+## User Personas
+${sections.persona_generation || "Not available"}
+
+## SWOT Analysis
+${sections.swot_analysis || "Not available"}
+
+## Campaign Strategy
+${sections.campaign_strategy || "Not available"}
+
+Now synthesize all of this into a cohesive executive summary.`;
+
+  return await generateText(SYSTEM_PROMPT, userPrompt, { temperature: 0.2 });
 };
 
-module.exports = { createSynthesizerNode };
+module.exports = { runSynthesizer, SYSTEM_PROMPT };

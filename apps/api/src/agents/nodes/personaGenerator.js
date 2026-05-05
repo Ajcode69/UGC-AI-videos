@@ -1,14 +1,10 @@
-const { createCreativeModel } = require("../../config/gemini");
-const { SystemMessage, HumanMessage } = require("@langchain/core/messages");
+const { generateText } = require("../../config/gemini");
+const { webSearch, gatherAudienceInsights } = require("../tools");
 
 /**
  * Persona Generator Node
  * 
  * Creates detailed user personas from market research data and audience insights.
- * Each persona includes demographics, psychographics, pain points, goals,
- * preferred channels, and a "day in the life" narrative.
- * 
- * Can be used standalone or as a node in the full research workflow.
  */
 
 const SYSTEM_PROMPT = `You are a User Research & Persona Design Specialist with deep expertise in behavioral psychology and consumer research.
@@ -20,14 +16,7 @@ Your expertise includes:
 - Pain point identification
 - Empathy mapping
 
-When generating personas:
-1. Use audience_insights tool to ground personas in real demographic data
-2. Use web_search to find actual consumer discussions, reviews, and forum posts
-3. Create 3-5 distinct personas with meaningful differences (not just age/gender variations)
-4. Each persona must feel like a REAL person, not a stereotype
-5. Include specific behavioral patterns and decision-making criteria
-
-For EACH persona, provide:
+Create 3-5 distinct personas. For EACH persona, provide:
 - Name, Age, Location, Occupation, Income Range
 - Photo description (for visual reference)
 - Quote that captures their mindset
@@ -40,28 +29,30 @@ For EACH persona, provide:
 - Objections to Purchase (why they might NOT buy)
 - "Day in the Life" mini-narrative (2-3 sentences)
 
-IMPORTANT: Personas should be diverse in meaningful ways — different motivations, different objections, different channels. Not just demographic diversity for its own sake.`;
+IMPORTANT: Personas should be diverse in meaningful ways — different motivations, different objections, different channels.`;
 
-const createPersonaGeneratorNode = (tools) => {
-  const model = createCreativeModel({ temperature: 0.8 }).bindTools(tools);
+const runPersonaGeneration = async (query) => {
+  const [searchResults, audienceData] = await Promise.all([
+    webSearch({ query: `${query} target audience consumer behavior 2026` }),
+    gatherAudienceInsights({ productCategory: query }),
+  ]);
 
-  return async (state) => {
-    const messages = [new SystemMessage(SYSTEM_PROMPT), ...state.messages];
-    const response = await model.invoke(messages);
-    return { messages: [response] };
-  };
+  const toolContext = `
+## Web Search Results
+${JSON.stringify(searchResults, null, 2)}
+
+## Audience Insights
+${JSON.stringify(audienceData, null, 2)}
+`;
+
+  const userPrompt = `Generate user personas for: "${query}"
+
+Here is the audience data I gathered:
+${toolContext}
+
+Now create 3-5 detailed, realistic user personas.`;
+
+  return await generateText(SYSTEM_PROMPT, userPrompt, { temperature: 0.8 });
 };
 
-/**
- * Standalone function — generate user personas outside a graph.
- */
-const runPersonaGeneration = async (query, tools) => {
-  const model = createCreativeModel({ temperature: 0.8 }).bindTools(tools);
-  const messages = [
-    new SystemMessage(SYSTEM_PROMPT),
-    new HumanMessage(query),
-  ];
-  return await model.invoke(messages);
-};
-
-module.exports = { createPersonaGeneratorNode, runPersonaGeneration };
+module.exports = { runPersonaGeneration, SYSTEM_PROMPT };
