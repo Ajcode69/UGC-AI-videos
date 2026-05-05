@@ -13,26 +13,24 @@ const PublishingPreview = () => {
           </h2>
           <p className="text-gray-400 mt-2">Preview how your AI generated UGC looks across platforms.</p>
         </div>
-        
+
         <div className="flex bg-dark-surface p-1 rounded-xl border border-dark-border">
           <button
             onClick={() => setActiveTab('instagram')}
-            className={`flex items-center gap-2 px-6 py-2.5 rounded-lg transition-all duration-300 font-medium ${
-              activeTab === 'instagram' 
-                ? 'bg-gradient-to-r from-pink-600 to-purple-600 text-white shadow-lg' 
+            className={`flex items-center gap-2 px-6 py-2.5 rounded-lg transition-all duration-300 font-medium ${activeTab === 'instagram'
+                ? 'bg-gradient-to-r from-pink-600 to-purple-600 text-white shadow-lg'
                 : 'text-gray-400 hover:text-gray-200'
-            }`}
+              }`}
           >
             <FiInstagram className="text-lg" />
             Instagram
           </button>
           <button
             onClick={() => setActiveTab('amazon')}
-            className={`flex items-center gap-2 px-6 py-2.5 rounded-lg transition-all duration-300 font-medium ${
-              activeTab === 'amazon' 
-                ? 'bg-gradient-to-r from-orange-500 to-yellow-500 text-white shadow-lg' 
+            className={`flex items-center gap-2 px-6 py-2.5 rounded-lg transition-all duration-300 font-medium ${activeTab === 'amazon'
+                ? 'bg-gradient-to-r from-orange-500 to-yellow-500 text-white shadow-lg'
                 : 'text-gray-400 hover:text-gray-200'
-            }`}
+              }`}
           >
             <FiShoppingCart className="text-lg" />
             Amazon Listing
@@ -71,7 +69,7 @@ const InstagramMock = () => {
             </div>
             <div className="absolute bottom-4 left-4 right-4 text-white text-sm">
               <p className="font-semibold mb-1">brand_official</p>
-              <p className="opacity-90">Introducing our revolutionary new product! Generated purely by AI. 🚀✨ #ai #ugc #innovation</p>
+              <p className="opacity-90">Introducing our revolutionary new product! </p>
             </div>
           </div>
 
@@ -96,7 +94,7 @@ const InstagramMock = () => {
         <h3 className="text-xl font-semibold mb-6 flex items-center gap-2">
           <FiTrendingUp className="text-pink-500" /> Real-time Post Insights
         </h3>
-        
+
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
           <StatCard title="Total Reach" value="145.2K" trend="+12%" icon={<FiEye className="text-blue-400" />} />
           <StatCard title="Likes" value="12,492" trend="+8%" icon={<FiHeart className="text-red-400" />} />
@@ -143,44 +141,44 @@ const AmazonMock = () => {
       {/* Amazon Listing Mockup */}
       <div className="w-full xl:w-[60%] border border-gray-200 bg-white rounded-xl overflow-hidden shadow-sm">
         <div className="bg-slate-900 px-4 py-3 flex items-center justify-between">
-            <div className="text-white font-bold text-xl tracking-tighter">amazon</div>
-            <div className="bg-white/20 h-8 w-64 rounded-md"></div>
+          <div className="text-white font-bold text-xl tracking-tighter">amazon</div>
+          <div className="bg-white/20 h-8 w-64 rounded-md"></div>
         </div>
         <div className="p-6 flex flex-col md:flex-row gap-8">
-            {/* Gallery */}
-            <div className="w-full md:w-1/2">
-                <div className="aspect-square bg-gray-100 border border-gray-200 rounded-lg flex items-center justify-center relative overflow-hidden mb-4 group cursor-pointer">
-                    <div className="absolute inset-0 bg-black/5 flex items-center justify-center">
-                         <div className="w-16 h-16 bg-black/60 rounded-full flex items-center justify-center backdrop-blur-sm group-hover:scale-110 transition-transform">
-                             <div className="w-0 h-0 border-t-[10px] border-t-transparent border-l-[16px] border-l-white border-b-[10px] border-b-transparent ml-1"></div>
-                         </div>
-                    </div>
-                    <span className="text-gray-400 font-medium z-10 absolute bottom-4">AI Product Video Demo</span>
+          {/* Gallery */}
+          <div className="w-full md:w-1/2">
+            <div className="aspect-square bg-gray-100 border border-gray-200 rounded-lg flex items-center justify-center relative overflow-hidden mb-4 group cursor-pointer">
+              <div className="absolute inset-0 bg-black/5 flex items-center justify-center">
+                <div className="w-16 h-16 bg-black/60 rounded-full flex items-center justify-center backdrop-blur-sm group-hover:scale-110 transition-transform">
+                  <div className="w-0 h-0 border-t-[10px] border-t-transparent border-l-[16px] border-l-white border-b-[10px] border-b-transparent ml-1"></div>
                 </div>
-                <div className="flex gap-2">
-                    <div className="w-16 h-16 bg-gray-200 rounded border-2 border-orange-400 flex items-center justify-center text-xs text-gray-500">Vid</div>
-                    <div className="w-16 h-16 bg-gray-100 rounded border border-gray-200"></div>
-                    <div className="w-16 h-16 bg-gray-100 rounded border border-gray-200"></div>
-                </div>
+              </div>
+              <span className="text-gray-400 font-medium z-10 absolute bottom-4">AI Product Video Demo</span>
             </div>
-            {/* Info */}
-            <div className="w-full md:w-1/2">
-                <h1 className="text-black text-xl font-medium leading-tight mb-2">Premium Tech Gadget - AI Generated Video Listing</h1>
-                <div className="flex items-center gap-1 mb-4">
-                    <span className="text-yellow-500">★★★★☆</span>
-                    <span className="text-blue-600 text-sm hover:underline cursor-pointer">1,492 ratings</span>
-                </div>
-                <div className="text-3xl text-black font-medium mb-4">$129<span className="text-sm align-top">99</span></div>
-                <div className="text-sm text-gray-700 mb-6 space-y-1">
-                    <p>• Enhanced feature demonstration</p>
-                    <p>• Premium build quality</p>
-                    <p>• 1-Year Warranty</p>
-                </div>
-                <div className="space-y-3">
-                    <button className="w-full bg-[#FFD814] hover:bg-[#F7CA00] text-black rounded-full py-2.5 text-sm font-medium shadow-sm transition-colors">Add to Cart</button>
-                    <button className="w-full bg-[#FFA41C] hover:bg-[#FA8900] text-black rounded-full py-2.5 text-sm font-medium shadow-sm transition-colors">Buy Now</button>
-                </div>
+            <div className="flex gap-2">
+              <div className="w-16 h-16 bg-gray-200 rounded border-2 border-orange-400 flex items-center justify-center text-xs text-gray-500">Vid</div>
+              <div className="w-16 h-16 bg-gray-100 rounded border border-gray-200"></div>
+              <div className="w-16 h-16 bg-gray-100 rounded border border-gray-200"></div>
             </div>
+          </div>
+          {/* Info */}
+          <div className="w-full md:w-1/2">
+            <h1 className="text-black text-xl font-medium leading-tight mb-2">Premium Tech Gadget - AI Generated Video Listing</h1>
+            <div className="flex items-center gap-1 mb-4">
+              <span className="text-yellow-500">★★★★☆</span>
+              <span className="text-blue-600 text-sm hover:underline cursor-pointer">1,492 ratings</span>
+            </div>
+            <div className="text-3xl text-black font-medium mb-4">$129<span className="text-sm align-top">99</span></div>
+            <div className="text-sm text-gray-700 mb-6 space-y-1">
+              <p>• Enhanced feature demonstration</p>
+              <p>• Premium build quality</p>
+              <p>• 1-Year Warranty</p>
+            </div>
+            <div className="space-y-3">
+              <button className="w-full bg-[#FFD814] hover:bg-[#F7CA00] text-black rounded-full py-2.5 text-sm font-medium shadow-sm transition-colors">Add to Cart</button>
+              <button className="w-full bg-[#FFA41C] hover:bg-[#FA8900] text-black rounded-full py-2.5 text-sm font-medium shadow-sm transition-colors">Buy Now</button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -189,7 +187,7 @@ const AmazonMock = () => {
         <h3 className="text-xl font-semibold mb-6 flex items-center gap-2">
           <FiTrendingUp className="text-orange-500" /> E-commerce Impact
         </h3>
-        
+
         <div className="grid grid-cols-2 gap-4 mb-6">
           <StatCard title="Listing Views" value="45.8K" trend="+24%" icon={<FiEye className="text-blue-400" />} />
           <StatCard title="Video Plays" value="28.4K" trend="+42%" icon={<FiMousePointer className="text-indigo-400" />} />
@@ -198,21 +196,21 @@ const AmazonMock = () => {
         </div>
 
         <div className="bg-dark-surface border border-dark-border rounded-xl p-5 flex-1">
-           <h4 className="text-lg font-medium mb-4">Video Performance</h4>
-           <div className="space-y-5">
-              <div className="flex items-center justify-between border-b border-dark-border pb-3">
-                 <span className="text-gray-400">Play Rate</span>
-                 <span className="text-white font-medium">62% of visitors</span>
-              </div>
-              <div className="flex items-center justify-between border-b border-dark-border pb-3">
-                 <span className="text-gray-400">Avg. Watch Time</span>
-                 <span className="text-white font-medium">45 seconds</span>
-              </div>
-              <div className="flex items-center justify-between border-b border-dark-border pb-3">
-                 <span className="text-gray-400">Conversion Lift</span>
-                 <span className="text-green-400 font-medium">+34% vs static images</span>
-              </div>
-           </div>
+          <h4 className="text-lg font-medium mb-4">Video Performance</h4>
+          <div className="space-y-5">
+            <div className="flex items-center justify-between border-b border-dark-border pb-3">
+              <span className="text-gray-400">Play Rate</span>
+              <span className="text-white font-medium">62% of visitors</span>
+            </div>
+            <div className="flex items-center justify-between border-b border-dark-border pb-3">
+              <span className="text-gray-400">Avg. Watch Time</span>
+              <span className="text-white font-medium">45 seconds</span>
+            </div>
+            <div className="flex items-center justify-between border-b border-dark-border pb-3">
+              <span className="text-gray-400">Conversion Lift</span>
+              <span className="text-green-400 font-medium">+34% vs static images</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>

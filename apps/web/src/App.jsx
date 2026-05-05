@@ -1,7 +1,9 @@
 import { useState } from 'react';
-import { FiVideo, FiBarChart2, FiSettings, FiLogOut, FiPlusSquare, FiLayout } from 'react-icons/fi';
+import { FiVideo, FiBarChart2, FiSettings, FiLogOut, FiPlusSquare, FiLayout, FiClock } from 'react-icons/fi';
 import AdGenerator from './components/AdGenerator';
 import PublishingPreview from './components/PublishingPreview';
+import HistoryGallery from './components/HistoryGallery';
+import ResearchAgents from './components/ResearchAgents';
 
 function App() {
   const [user, setUser] = useState({ name: "Demo User", loggedIn: true }); // Mock User
@@ -58,6 +60,12 @@ function App() {
             active={activeView === 'research'} 
             onClick={() => setActiveView('research')} 
           />
+          <NavItem 
+            icon={<FiClock />} 
+            label="History & DB" 
+            active={activeView === 'history'} 
+            onClick={() => setActiveView('history')} 
+          />
         </nav>
 
         <div className="p-4 border-t border-dark-border">
@@ -97,13 +105,22 @@ function App() {
             {activeView === 'publishing' && <PublishingPreview />}
 
             {activeView === 'research' && (
-               <div className="max-w-4xl mx-auto mt-8 text-center">
-                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-dark-surface border border-dark-border mb-4">
-                     <FiBarChart2 className="text-2xl text-gray-400" />
+               <div className="max-w-5xl mx-auto">
+                  <div className="mb-8">
+                     <h2 className="text-3xl font-bold mb-2">Market Research Agents</h2>
+                     <p className="text-gray-400">Connect to the backend LangGraph workflows to run full market research.</p>
                   </div>
-                  <h2 className="text-2xl font-bold mb-2">Market Research Agents</h2>
-                  <p className="text-gray-400">Connect to the backend LangGraph workflows to run full market research.</p>
-                  <p className="text-sm text-primary mt-4">(UI Implementation Pending)</p>
+                  <ResearchAgents />
+               </div>
+            )}
+
+            {activeView === 'history' && (
+               <div className="max-w-6xl mx-auto">
+                  <div className="mb-8">
+                     <h2 className="text-3xl font-bold mb-2">Supabase DB History</h2>
+                     <p className="text-gray-400">View previously generated AI videos and their market research data.</p>
+                  </div>
+                  <HistoryGallery />
                </div>
             )}
          </div>
